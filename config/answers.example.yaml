@@ -1,0 +1,74 @@
+# Copy to config/answers.yaml (git-ignored) and fill in. Used only on your laptop by
+# `jobhunt apply`. Anything left empty is left empty on the form and flagged for you.
+# Email, phone, CTC, work authorization and EEO answers are typed into forms only: they are
+# never sent to any LLM, and questions about them are never drafted.
+
+settings:                     # all optional; these are the defaults
+  max_per_session: 5          # forms opened per `jobhunt apply`
+  writing:                    # LLM for cover letters and question drafts
+    host: https://ollama.com  # Ollama Cloud (needs OLLAMA_API_KEY); falls back to local Ollama
+    model: gpt-oss:20b
+    think: low                # gpt-oss can't turn thinking off; higher levels are very slow
+    timeout_seconds: 180
+
+identity:
+  full_name: Alex Example
+  preferred_name: Alex
+  email: alex@example.com
+  phone: "+91 90000 00000"    # with country code
+  city: Bengaluru
+  country: India
+  linkedin: https://www.linkedin.com/in/example
+  github: https://github.com/example
+  portfolio: ""
+
+work:
+  current_company: Example Corp
+  current_title: Machine Learning Engineer
+  years_total: 2              # total years of experience
+  years_relevant: 2           # in this field
+  notice_period: 30 days
+  current_ctc_lpa: 10
+  expected_ctc_lpa: 15        # used for jobs in India
+  expected_usd: 70000         # used for jobs abroad; empty = left for you
+  earliest_start: "30 days from offer"
+  authorized_india: true      # legally allowed to work in India
+  needs_sponsorship_elsewhere: true   # would need a visa to work outside India
+
+preferences:
+  relocation: "Open to Hyderabad, Pune, Mumbai, Chennai; abroad with visa sponsorship"
+  work_mode: "Remote, hybrid or onsite"
+  travel: "Occasional travel is fine"
+
+education:
+  - degree: M.Sc.
+    field: Data Science
+    institution: Example University
+    location: Bengaluru
+    graduation_year: 2026
+    gpa: "8.0 / 10"           # empty = left for you
+
+standard:
+  how_heard: Company careers page
+  # "Why this company" is generated per job from the description and your facts.
+  eeo:                         # US-style voluntary self-identification
+    gender: Decline to self-identify
+    hispanic_latino: Decline to self-identify
+    race_ethnicity: Decline to self-identify
+    veteran: I don't wish to answer
+    disability: I don't wish to answer
+    pronouns: ""               # empty = leave the field alone
+
+files:
+  resume: data/resume.pdf      # relative to the project folder
+  variants: {}                 # title keyword -> PDF, e.g. {"data scientist": data/resume-ds.pdf}
+
+# Things you're happy to state in answers and cover letters. Each must be true and match
+# your resume. These, the resume and the fields above are the only facts the LLM may use.
+facts:
+  - Built a document-extraction pipeline at Example Corp
+
+# Your own answers to questions that come up often (matched exactly or nearly).
+custom:
+  - q: Are you willing to work in shifts?
+    a: "Yes"

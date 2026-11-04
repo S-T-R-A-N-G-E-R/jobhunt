@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 420" width="1280" height="420" role="img" aria-label="jobhunt: your job search on autopilot">
+  <title>jobhunt: your job search on autopilot</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#05060f"/>
+      <stop offset="0.55" stop-color="#0a0f2c"/>
+      <stop offset="1" stop-color="#14072b"/>
+    </linearGradient>
+    <radialGradient id="orb" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#7c5cff" stop-opacity="0.55"/>
+      <stop offset="0.45" stop-color="#2de2ff" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#2de2ff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="title" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#7cf7ff"/>
+      <stop offset="0.5" stop-color="#b9a6ff"/>
+      <stop offset="1" stop-color="#ff7ae0"/>
+    </linearGradient>
+    <linearGradient id="grid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2de2ff" stop-opacity="0"/>
+      <stop offset="0.25" stop-color="#2de2ff" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#7c5cff" stop-opacity="0.55"/>
+    </linearGradient>
+    <linearGradient id="scan" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#7cf7ff" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#7cf7ff" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#7cf7ff" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-50%" width="140%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softglow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <clipPath id="frame"><rect x="0" y="0" width="1280" height="420" rx="22"/></clipPath>
+    <clipPath id="floor"><rect x="0" y="262" width="1280" height="158"/></clipPath>
+  </defs>
+
+  <style>
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+    .twinkle { animation: tw 3.2s ease-in-out infinite; }
+    .t2 { animation-delay: 1.1s; } .t3 { animation-delay: 2.2s; }
+    @keyframes tw { 0%,100% { opacity: .15 } 50% { opacity: .9 } }
+    .blink { animation: bl 1.4s steps(2, start) infinite; }
+    @keyframes bl { to { visibility: hidden } }
+    .pulse { animation: pu 4s ease-in-out infinite; transform-origin: 640px 170px; }
+    @keyframes pu { 0%,100% { opacity: .75; transform: scale(1) } 50% { opacity: 1; transform: scale(1.06) } }
+    .chip { fill: #0b1030; stroke: #2de2ff; stroke-opacity: .45; }
+    .chiplabel { fill: #cfe9ff; font-size: 15px; letter-spacing: 2px; }
+    .chipnum { fill: #7cf7ff; font-size: 12px; letter-spacing: 1px; opacity: .8; }
+    .hud { fill: #7cf7ff; font-size: 13px; letter-spacing: 3px; opacity: .7; }
+  </style>
+
+  <g clip-path="url(#frame)">
+    <rect width="1280" height="420" fill="url(#bg)"/>
+
+    <!-- stars -->
+    <g fill="#cfe9ff">
+      <circle class="twinkle" cx="92" cy="74" r="1.4"/>
+      <circle class="twinkle t2" cx="214" cy="142" r="1"/>
+      <circle class="twinkle t3" cx="338" cy="58" r="1.2"/>
+      <circle class="twinkle" cx="452" cy="118" r="0.9"/>
+      <circle class="twinkle t3" cx="866" cy="66" r="1.3"/>
+      <circle class="twinkle t2" cx="972" cy="136" r="1"/>
+      <circle class="twinkle" cx="1088" cy="84" r="1.4"/>
+      <circle class="twinkle t3" cx="1192" cy="150" r="1"/>
+      <circle class="twinkle t2" cx="1150" cy="96" r="0.9"/>
+      <circle class="twinkle" cx="160" cy="214" r="0.9"/>
+      <circle class="twinkle t2" cx="1220" cy="226" r="1.1"/>
+    </g>
+
+    <!-- orb -->
+    <circle class="pulse" cx="640" cy="170" r="230" fill="url(#orb)"/>
+
+    <!-- perspective floor grid -->
+    <g clip-path="url(#floor)" stroke="url(#grid)" stroke-width="1.2" fill="none">
+      <line x1="640" y1="262" x2="-560" y2="420"/>
+      <line x1="640" y1="262" x2="-260" y2="420"/>
+      <line x1="640" y1="262" x2="40" y2="420"/>
+      <line x1="640" y1="262" x2="340" y2="420"/>
+      <line x1="640" y1="262" x2="640" y2="420"/>
+      <line x1="640" y1="262" x2="940" y2="420"/>
+      <line x1="640" y1="262" x2="1240" y2="420"/>
+      <line x1="640" y1="262" x2="1540" y2="420"/>
+      <line x1="640" y1="262" x2="1840" y2="420"/>
+      <g>
+        <line x1="0" y1="270" x2="1280" y2="270"/>
+        <line x1="0" y1="284" x2="1280" y2="284"/>
+        <line x1="0" y1="304" x2="1280" y2="304"/>
+        <line x1="0" y1="332" x2="1280" y2="332"/>
+        <line x1="0" y1="370" x2="1280" y2="370"/>
+        <line x1="0" y1="418" x2="1280" y2="418"/>
+        <animateTransform attributeName="transform" type="translate" values="0 0; 0 14; 0 0" dur="6s" repeatCount="indefinite"/>
+      </g>
+    </g>
+    <line x1="0" y1="262" x2="1280" y2="262" stroke="#7cf7ff" stroke-opacity=".55" stroke-width="1.5" filter="url(#softglow)"/>
+
+    <!-- scanning beam -->
+    <rect x="-300" y="0" width="300" height="420" fill="url(#scan)">
+      <animate attributeName="x" values="-300;1280" dur="7s" repeatCount="indefinite"/>
+    </rect>
+
+    <!-- HUD corners -->
+    <g class="mono">
+      <text x="40" y="46" class="hud">SYS://JOBHUNT</text>
+      <text x="1240" y="46" class="hud" text-anchor="end">AUTOPILOT ENGAGED</text>
+      <circle cx="1036" cy="41.5" r="4" fill="#5bffb0" filter="url(#softglow)">
+        <animate attributeName="opacity" values="1;.25;1" dur="1.6s" repeatCount="indefinite"/>
+      </circle>
+      <path d="M24 24 h26 M24 24 v26" stroke="#7cf7ff" stroke-opacity=".6" stroke-width="2" fill="none"/>
+      <path d="M1256 24 h-26 M1256 24 v26" stroke="#7cf7ff" stroke-opacity=".6" stroke-width="2" fill="none"/>
+      <path d="M24 396 h26 M24 396 v-26" stroke="#7cf7ff" stroke-opacity=".6" stroke-width="2" fill="none"/>
+      <path d="M1256 396 h-26 M1256 396 v-26" stroke="#7cf7ff" stroke-opacity=".6" stroke-width="2" fill="none"/>
+    </g>
+
+    <!-- title -->
+    <g class="mono" text-anchor="middle">
+      <text x="640" y="182" font-size="112" font-weight="700" fill="url(#title)" filter="url(#glow)" letter-spacing="4">jobhunt</text>
+      <text x="640" y="232" font-size="20" fill="#cfe9ff" fill-opacity=".85" letter-spacing="3">YOUR JOB SEARCH, ON AUTOPILOT · LOCAL-FIRST AI</text>
+    </g>
+
+    <!-- pipeline -->
+    <g class="mono">
+      <line x1="270" y1="340" x2="1010" y2="340" stroke="#2de2ff" stroke-opacity=".35" stroke-width="2" stroke-dasharray="6 8">
+        <animate attributeName="stroke-dashoffset" values="0;-28" dur="1s" repeatCount="indefinite"/>
+      </line>
+
+      <rect class="chip" x="250" y="318" width="150" height="44" rx="10"/>
+      <text x="270" y="336" class="chipnum">01</text>
+      <text x="325" y="349" class="chiplabel" text-anchor="middle" dx="12">FETCH</text>
+
+      <rect class="chip" x="447" y="318" width="150" height="44" rx="10"/>
+      <text x="467" y="336" class="chipnum">02</text>
+      <text x="522" y="349" class="chiplabel" text-anchor="middle" dx="12">FILTER</text>
+
+      <rect class="chip" x="644" y="318" width="150" height="44" rx="10"/>
+      <text x="664" y="336" class="chipnum">03</text>
+      <text x="719" y="349" class="chiplabel" text-anchor="middle" dx="12">SCORE</text>
+
+      <rect class="chip" x="841" y="318" width="150" height="44" rx="10"/>
+      <text x="861" y="336" class="chipnum">04</text>
+      <text x="916" y="349" class="chiplabel" text-anchor="middle" dx="12">DIGEST</text>
+
+      <circle cx="250" cy="340" r="6" fill="#7cf7ff" opacity="0" filter="url(#glow)">
+        <animate attributeName="cx" values="250;1030" dur="4.5s" repeatCount="indefinite" calcMode="spline" keySplines=".5 0 .5 1"/>
+        <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.08;.9;1" dur="4.5s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+  </g>
+
+  <rect x="0.75" y="0.75" width="1278.5" height="418.5" rx="21.5" fill="none" stroke="#7cf7ff" stroke-opacity=".18" stroke-width="1.5"/>
+</svg>

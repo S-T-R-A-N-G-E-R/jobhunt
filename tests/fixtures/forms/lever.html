@@ -1,0 +1,52 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Imaginary Commerce - Data Scientist</title>
+<script src="detector.js"></script></head>
+<body>
+<form id="application-form" action="/submit-endpoint" method="post" enctype="multipart/form-data">
+  <div class="section application-form"><h4>Submit your application</h4><ul>
+    <li class="application-question resume"><label><div class="application-label">Resume/CV<span class="required">✱</span></div>
+      <div class="application-field"><input type="file" name="resume" id="resume-upload-input"></div></label></li>
+    <li class="application-question"><label><div class="application-label">Full name<span class="required">✱</span></div>
+      <div class="application-field"><input type="text" name="name" required></div></label></li>
+    <li class="application-question"><label><div class="application-label">Email<span class="required">✱</span></div>
+      <div class="application-field"><input type="email" name="email" required></div></label></li>
+    <li class="application-question"><label><div class="application-label">Phone<span class="required">✱</span></div>
+      <div class="application-field"><input type="text" name="phone" required></div></label></li>
+    <li class="application-question"><label><div class="application-label">Current location</div>
+      <div class="application-field"><input type="text" name="location" id="location-input">
+      <input type="hidden" name="selectedLocation"></div></label></li>
+    <li class="application-question"><label><div class="application-label">Current company<span class="required">✱</span></div>
+      <div class="application-field"><input type="text" name="org" required></div></label></li>
+  </ul></div>
+  <div class="section application-form"><h4>Links</h4><ul>
+    <li class="application-question"><label><div class="application-label">LinkedIn URL</div>
+      <div class="application-field"><input type="text" name="urls[LinkedIn]"></div></label></li>
+    <li class="application-question"><label><div class="application-label">GitHub URL</div>
+      <div class="application-field"><input type="text" name="urls[GitHub]"></div></label></li>
+  </ul></div>
+  <div class="section application-form"><ul>
+    <li class="application-question custom-question"><div class="application-label full-width multiple-choice"><div class="text">Imaginary Commerce is an equal opportunity employer. Information about race, disability or veteran status is never used in hiring decisions. Please select the option that best describes your gender:<span class="required">✱</span></div></div>
+      <div class="application-field"><ul>
+        <li><label><input type="radio" name="cards[c1][field0]" value="Male" required><span>Male</span></label></li>
+        <li><label><input type="radio" name="cards[c1][field0]" value="Female" required><span>Female</span></label></li>
+        <li><label><input type="radio" name="cards[c1][field0]" value="Prefer not to disclose" required><span>Prefer not to disclose</span></label></li>
+      </ul></div></li>
+    <li class="application-question custom-question"><div class="application-label"><div class="text">Total years of experience<span class="required">✱</span></div></div>
+      <div class="application-field"><ul>
+        <li><label><input type="radio" name="cards[c1][field1]" value="Below 2 yrs"><span>Below 2 yrs</span></label></li>
+        <li><label><input type="radio" name="cards[c1][field1]" value="3 yrs to 7 yrs"><span>3 yrs to 7 yrs</span></label></li>
+        <li><label><input type="radio" name="cards[c1][field1]" value="7+ yrs"><span>7+ yrs</span></label></li>
+      </ul></div></li>
+    <li class="application-question custom-question"><div class="application-label"><div class="text">Will you require visa sponsorship to work in this role?<span class="required">✱</span></div></div>
+      <div class="application-field"><ul>
+        <li><label><input type="radio" name="cards[c1][field2]" value="Yes"><span>Yes</span></label></li>
+        <li><label><input type="radio" name="cards[c1][field2]" value="No"><span>No</span></label></li>
+      </ul></div></li>
+  </ul></div>
+  <div class="section application-form"><ul>
+    <li class="application-question"><label><div class="application-label">Additional information</div>
+      <div class="application-field"><textarea name="comments"></textarea></div></label></li>
+  </ul></div>
+  <button id="submit" type="submit" class="postings-btn">Submit application</button>
+</form>
+</body></html>

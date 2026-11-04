@@ -1,0 +1,103 @@
+{
+ "jobs": [
+  {
+   "id": "11111111-0000-4000-8000-000000000001",
+   "title": "Machine Learning Engineer, Search",
+   "department": "Engineering",
+   "team": "Search Relevance",
+   "employmentType": "FullTime",
+   "location": "Bengaluru, India",
+   "shouldDisplayCompensationOnJobPostings": true,
+   "secondaryLocations": [
+    {
+     "location": "Remote - India",
+     "address": {}
+    }
+   ],
+   "publishedAt": "2026-01-10T09:00:00.000+00:00",
+   "isListed": true,
+   "isRemote": false,
+   "workplaceType": "OnSite",
+   "address": {
+    "postalAddress": {
+     "addressRegion": "",
+     "addressCountry": "India",
+     "addressLocality": "Bengaluru"
+    }
+   },
+   "jobUrl": "https://jobs.ashbyhq.com/quillstone/11111111-0000-4000-8000-000000000001",
+   "applyUrl": "https://jobs.ashbyhq.com/quillstone/11111111-0000-4000-8000-000000000001/application",
+   "descriptionHtml": "<p><strong>About Quillstone Health</strong></p><p>Quillstone Health is a fictional company used only in jobhunt's test fixtures. We build tools that help small teams ship reliable software.</p><p><strong>The role</strong></p><p>As a Machine Learning Engineer, Search on the Search Relevance team you will design, build and operate production systems, work closely with product and data partners, and own your work end to end.</p><ul><li>Build and maintain services used by thousands of customers.</li><li>Improve quality through testing, reviews and monitoring.</li><li>Mentor teammates and write clear design docs.</li></ul><p><strong>What we offer</strong></p><p>Flexible hours, learning budget &amp; health cover.</p>",
+   "descriptionPlain": "About Quillstone Health\n\nQuillstone Health is a fictional company used only in jobhunt's test fixtures. We build tools that help small teams ship reliable software.\n\nThe role\n\nAs a Machine Learning Engineer, Search on the Search Relevance team you will design, build and operate production systems, work closely with product and data partners, and own your work end to end.",
+   "compensation": {
+    "compensationTierSummary": "₹30L – ₹45L",
+    "scrapeableCompensationSalarySummary": null,
+    "compensationTiers": [],
+    "summaryComponents": []
+   }
+  },
+  {
+   "id": "11111111-0000-4000-8000-000000000002",
+   "title": "Senior Backend Engineer (Python)",
+   "department": "Engineering",
+   "team": "Platform",
+   "employmentType": "FullTime",
+   "location": "Remote - APAC",
+   "shouldDisplayCompensationOnJobPostings": false,
+   "secondaryLocations": [],
+   "publishedAt": "2026-01-11T09:00:00.000+00:00",
+   "isListed": true,
+   "isRemote": true,
+   "workplaceType": "Remote",
+   "address": {
+    "postalAddress": {
+     "addressRegion": "",
+     "addressCountry": "Remote - APAC",
+     "addressLocality": "Remote - APAC"
+    }
+   },
+   "jobUrl": "https://jobs.ashbyhq.com/quillstone/11111111-0000-4000-8000-000000000002",
+   "applyUrl": "https://jobs.ashbyhq.com/quillstone/11111111-0000-4000-8000-000000000002/application",
+   "descriptionHtml": "<p><strong>About Quillstone Health</strong></p><p>Quillstone Health is a fictional company used only in jobhunt's test fixtures. We build tools that help small teams ship reliable software.</p><p><strong>The role</strong></p><p>As a Senior Backend Engineer (Python) on the Platform team you will design, build and operate production systems, work closely with product and data partners, and own your work end to end.</p><ul><li>Build and maintain services used by thousands of customers.</li><li>Improve quality through testing, reviews and monitoring.</li><li>Mentor teammates and write clear design docs.</li></ul><p><strong>What we offer</strong></p><p>Flexible hours, learning budget &amp; health cover.</p>",
+   "descriptionPlain": "About Quillstone Health\n\nQuillstone Health is a fictional company used only in jobhunt's test fixtures. We build tools that help small teams ship reliable software.\n\nThe role\n\nAs a Senior Backend Engineer (Python) on the Platform team you will design, build and operate production systems, work closely with product and data partners, and own your work end to end.",
+   "compensation": {
+    "compensationTierSummary": null,
+    "scrapeableCompensationSalarySummary": null,
+    "compensationTiers": [],
+    "summaryComponents": []
+   }
+  },
+  {
+   "id": "11111111-0000-4000-8000-000000000003",
+   "title": "Product Designer",
+   "department": "Engineering",
+   "team": "Design",
+   "employmentType": "FullTime",
+   "location": "Lisbon, Portugal",
+   "shouldDisplayCompensationOnJobPostings": false,
+   "secondaryLocations": [],
+   "publishedAt": "2026-01-12T09:00:00.000+00:00",
+   "isListed": true,
+   "isRemote": false,
+   "workplaceType": "OnSite",
+   "address": {
+    "postalAddress": {
+     "addressRegion": "",
+     "addressCountry": "Portugal",
+     "addressLocality": "Lisbon"
+    }
+   },
+   "jobUrl": "https://jobs.ashbyhq.com/quillstone/11111111-0000-4000-8000-000000000003",
+   "applyUrl": "https://jobs.ashbyhq.com/quillstone/11111111-0000-4000-8000-000000000003/application",
+   "descriptionHtml": "<p><strong>About Quillstone Health</strong></p><p>Quillstone Health is a fictional company used only in jobhunt's test fixtures. We build tools that help small teams ship reliable software.</p><p><strong>The role</strong></p><p>As a Product Designer on the Design team you will design, build and operate production systems, work closely with product and data partners, and own your work end to end.</p><ul><li>Build and maintain services used by thousands of customers.</li><li>Improve quality through testing, reviews and monitoring.</li><li>Mentor teammates and write clear design docs.</li></ul><p><strong>What we offer</strong></p><p>Flexible hours, learning budget &amp; health cover.</p>",
+   "descriptionPlain": "About Quillstone Health\n\nQuillstone Health is a fictional company used only in jobhunt's test fixtures. We build tools that help small teams ship reliable software.\n\nThe role\n\nAs a Product Designer on the Design team you will design, build and operate production systems, work closely with product and data partners, and own your work end to end.",
+   "compensation": {
+    "compensationTierSummary": null,
+    "scrapeableCompensationSalarySummary": null,
+    "compensationTiers": [],
+    "summaryComponents": []
+   }
+  }
+ ],
+ "apiVersion": "1"
+}

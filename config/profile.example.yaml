@@ -1,0 +1,39 @@
+# Copy to config/profile.yaml (git-ignored) and fill in.
+target_titles: ["Senior Backend Engineer", "Platform Engineer"]   # specific titles; matched as phrases
+title_exclude_keywords: ["intern", "internship", "sales"]   # whole words
+seniority: senior            # junior | mid | senior | staff | lead
+years_experience: 6
+locations:
+  accept: ["Bengaluru", "Remote - India", "Remote - APAC", "Remote"]
+  remote_ok: true
+  relocation_ok: false        # true lets every location through; the LLM judges fit
+  relocation_cities: []       # e.g. ["Hyderabad", "Pune"], used by the LLM when relocation_ok
+  relocation_notes: ""        # e.g. "Abroad only with visa sponsorship."
+compensation:
+  current_ctc_lpa: 0         # fill in
+  min_expected_ctc_lpa: 0    # fill in
+  min_usd_remote: 0          # for international remote roles
+must_haves: ["..."]          # things a role must have
+nice_to_haves: ["..."]
+dealbreakers: ["..."]        # e.g. "on-call heavy", "pure frontend", "contract only"
+what_i_want: |
+  A few sentences in my own words about the next role I want and why.
+llm:
+  local:
+    provider: ollama
+    model: qwen3.5:4b
+    think: false
+    keep_alive: 10m          # keep the model loaded during a run
+    timeout_seconds: 120
+    num_ctx: 16384           # enough for resume + profile + truncated job description
+  fallback:
+    enabled: false           # I'll turn this on once I add an API key
+    provider: anthropic
+    model: claude-haiku-5-5
+    max_calls_per_run: 10
+scoring:
+  min_score_for_digest: 70
+  max_llm_calls_per_run: 60
+digest:
+  max_jobs: 10
+  stretch_max: 2              # roles above your level that would otherwise match; 0 = off

@@ -1,0 +1,28 @@
+# secrets
+.env
+
+# python / tooling
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.DS_Store
+
+# runtime output
+output/
+logs/
+
+# personal data: never commit
+config/profile.yaml
+data/resume.md
+data/*.pdf
+data/*.db
+data/*.db-*
+config/companies.yaml
+CLAUDE.local.md
+PROGRESS.local.md
+
+# apply (Phase 3/4)
+config/answers.yaml
+.browser-profile/

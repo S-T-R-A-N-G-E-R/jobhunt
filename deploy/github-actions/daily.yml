@@ -1,0 +1,157 @@
+# Daily jobhunt run on GitHub Actions. Copy this to .github/workflows/daily.yml in a PRIVATE
+# runner repo, never the public code repo: Actions logs, caches and artifacts of a public repo
+# are visible to anyone. See docs/CLOUD.md.
+#
+# Repository variables (Settings → Secrets and variables → Actions → Variables), all optional:
+#   JOBHUNT_LLM           "cloud" (default): Ollama Cloud. "runner": Ollama on the runner (CPU).
+#   JOBHUNT_CLOUD_MODEL   Ollama Cloud model (default gpt-oss:20b)
+#   JOBHUNT_RUNNER_MODEL  model pulled on the runner; must equal llm.local.model (default qwen3.5:4b)
+name: daily
+
+on:
+  schedule:
+    - cron: "17 2 * * *" # 02:17 UTC = 07:47 IST. An odd minute avoids the top-of-hour rush.
+    - cron: "47 6 * * *" # catch-up at 12:17 IST: reads new Apply/Skip presses, then does real work only if the morning run was partial or missed
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Run even if today already succeeded
+        type: boolean
+        default: false
+      seed:
+        description: Restore the DB from the seed release (jobhunt cloud seed-db)
+        type: boolean
+        default: false
+      allow_fresh:
+        description: Start with an empty DB if no saved state exists
+        type: boolean
+        default: false
+
+concurrency:
+  group: jobhunt
+  cancel-in-progress: false
+
+permissions:
+  contents: write # read and delete the seed release
+  actions: write # list and delete DB artifacts
+
+env:
+  JOBHUNT_TIMEZONE: Asia/Kolkata # runners are on UTC; "already ran today" uses this date
+  JOBHUNT_RUNNER_REPO: ${{ github.repository }}
+  GH_TOKEN: ${{ github.token }}
+  OLLAMA_HOST: ${{ vars.JOBHUNT_LLM == 'runner' && 'http://localhost:11434' || 'https://ollama.com' }}
+  JOBHUNT_LLM_MODEL: ${{ vars.JOBHUNT_LLM != 'runner' && (vars.JOBHUNT_CLOUD_MODEL || 'gpt-oss:20b') || '' }}
+  JOBHUNT_LLM_THINK: ${{ vars.JOBHUNT_LLM != 'runner' && 'low' || '' }}
+  OLLAMA_API_KEY: ${{ vars.JOBHUNT_LLM != 'runner' && secrets.OLLAMA_API_KEY || '' }}
+  ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+  TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+  TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+  DB_CACHE_KEY: jobhunt-db-${{ github.run_id }}-${{ github.run_attempt }}
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Check out the public jobhunt code
+        uses: actions/checkout@v4
+        with:
+          repository: S-T-R-A-N-G-E-R/jobhunt # change if you use a fork
+          ref: main
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      - name: Install (Python version from pyproject.toml)
+        run: uv sync --frozen
+
+      - name: Write personal files from secrets
+        env:
+          PROFILE_YAML: ${{ secrets.PROFILE_YAML }}
+          RESUME_MD: ${{ secrets.RESUME_MD }}
+          COMPANIES_YAML: ${{ secrets.COMPANIES_YAML }}
+        run: uv run jobhunt cloud write-files
+
+      - name: Restore DB cache
+        uses: actions/cache/restore@v4
+        with:
+          path: data/jobhunt.db
+          key: ${{ env.DB_CACHE_KEY }}
+          restore-keys: jobhunt-db-
+
+      - name: Restore DB (seed > cache > newest artifact)
+        id: restore
+        run: >-
+          uv run jobhunt cloud restore-db
+          ${{ inputs.seed && '--seed' || '' }}
+          ${{ inputs.allow_fresh && '--allow-fresh' || '' }}
+
+      # ---- Option A only: Ollama on the runner (CPU, slow; no data leaves the runner) ----
+      - name: "Runner LLM: cache the model"
+        if: vars.JOBHUNT_LLM == 'runner'
+        uses: actions/cache@v4
+        with:
+          path: ~/.ollama/models
+          key: ollama-${{ vars.JOBHUNT_RUNNER_MODEL || 'qwen3.5:4b' }}
+
+      - name: "Runner LLM: install and start Ollama"
+        if: vars.JOBHUNT_LLM == 'runner'
+        env:
+          MODEL: ${{ vars.JOBHUNT_RUNNER_MODEL || 'qwen3.5:4b' }}
+        run: |
+          curl -fsSL https://ollama.com/install.sh | sh
+          sudo systemctl stop ollama 2>/dev/null || true
+          OLLAMA_MODELS="$HOME/.ollama/models" nohup ollama serve > /tmp/ollama.log 2>&1 &
+          for _ in $(seq 60); do curl -sf localhost:11434/api/tags > /dev/null && break; sleep 1; done
+          ollama pull "$MODEL"
+
+      # Output goes to a file, not the log, so company names and job titles stay out of it.
+      # Errors still reach you: jobhunt sends crashes to Telegram itself.
+      - name: Run jobhunt
+        run: |
+          mkdir -p logs
+          uv run jobhunt run --quiet ${{ !inputs.force && '--if-not-run-today' || '' }} \
+            > logs/run.out 2>&1
+
+      - name: Compact DB
+        if: always() && steps.restore.outcome == 'success'
+        run: |
+          uv run python -c "import sqlite3; sqlite3.connect('data/jobhunt.db').execute('VACUUM')"
+          echo "DB size: $(du -m data/jobhunt.db | cut -f1) MB"
+
+      - name: Save DB cache
+        if: always() && steps.restore.outcome == 'success'
+        uses: actions/cache/save@v4
+        with:
+          path: data/jobhunt.db
+          key: ${{ env.DB_CACHE_KEY }}
+
+      - name: Upload DB backup
+        if: always() && steps.restore.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: jobhunt-db
+          path: data/jobhunt.db
+          retention-days: 7
+          compression-level: 9
+
+      - name: Keep only the newest 3 DB artifacts
+        if: always() && steps.restore.outcome == 'success'
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts?name=jobhunt-db&per_page=100" \
+            --jq '.artifacts | sort_by(.created_at) | reverse | .[3:] | .[].id' |
+            xargs -r -I{} gh api -X DELETE "repos/$GITHUB_REPOSITORY/actions/artifacts/{}"
+
+      - name: Delete the used seed
+        if: success() && inputs.seed
+        run: gh release delete seed --repo "$GITHUB_REPOSITORY" --yes --cleanup-tag
+
+      - name: Tell Telegram the run failed
+        if: failure()
+        env:
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          curl -sS --fail -o /dev/null "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "text=jobhunt cloud run failed: ${RUN_URL}"

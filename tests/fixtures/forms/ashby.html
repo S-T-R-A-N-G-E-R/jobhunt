@@ -1,0 +1,80 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Placeholder Analytics - Associate Data Scientist</title>
+<script src="detector.js"></script></head>
+<body>
+<form class="ashby-application-form" action="/submit-endpoint" method="post">
+  <div class="autofill"><p>Autofill from resume</p><input type="file" id="autofill-pane"></div>
+  <div class="ashby-application-form-field-entry" data-field-path="_systemfield_name">
+    <label class="ashby-application-form-question-title" for="_systemfield_name">Name</label>
+    <input id="_systemfield_name" name="_systemfield_name" type="text" required></div>
+  <div class="ashby-application-form-field-entry" data-field-path="_systemfield_email">
+    <label class="ashby-application-form-question-title" for="_systemfield_email">Email</label>
+    <input id="_systemfield_email" type="email" required></div>
+  <div class="ashby-application-form-field-entry" data-field-path="_systemfield_resume">
+    <label class="ashby-application-form-question-title" for="_systemfield_resume">Resume</label>
+    <button>Upload File</button><input id="_systemfield_resume" type="file" required></div>
+  <div class="ashby-application-form-field-entry" data-field-path="f-phone">
+    <label class="ashby-application-form-question-title" for="f-phone">Phone Number</label>
+    <input id="f-phone" type="tel" required></div>
+  <div class="ashby-application-form-field-entry" data-field-path="f-ctc">
+    <label class="ashby-application-form-question-title" for="f-ctc">Current CTC</label>
+    <input id="f-ctc" type="text" required></div>
+  <div class="ashby-application-form-field-entry" data-field-path="f-ectc">
+    <label class="ashby-application-form-question-title" for="f-ectc">Expected CTC</label>
+    <input id="f-ectc" type="text" required></div>
+  <div class="ashby-application-form-field-entry" data-field-path="f-notice">
+    <label class="ashby-application-form-question-title" for="f-notice">Notice Period</label>
+    <input id="f-notice" type="text" required></div>
+  <div class="ashby-application-form-field-entry" data-field-path="_systemfield_location">
+    <label class="ashby-application-form-question-title" for="_systemfield_location">Where are you currently located?</label>
+    <div class="autocomplete"><input id="loc" role="combobox" aria-autocomplete="list" placeholder="Start typing..."></div></div>
+  <div class="ashby-application-form-field-entry" data-field-path="f-auth">
+    <label class="ashby-application-form-question-title" for="f-auth">Are you authorized to work in the country where the job is located?</label>
+    <div class="ashby-application-form-input-yesno">
+      <button class="ashby-application-form-input-yesno-option" aria-pressed="false" data-option="yes">Yes</button>
+      <button class="ashby-application-form-input-yesno-option" aria-pressed="false" data-option="no">No</button>
+      <input type="checkbox" name="f-auth" tabindex="-1" style="display:none"></div></div>
+  <div class="ashby-application-form-field-entry" data-field-path="f-sponsor">
+    <label class="ashby-application-form-question-title" for="f-sponsor">Will you now or in the future require sponsorship for employment visa status in this country?</label>
+    <div class="ashby-application-form-input-yesno">
+      <button class="ashby-application-form-input-yesno-option" aria-pressed="false" data-option="yes">Yes</button>
+      <button class="ashby-application-form-input-yesno-option" aria-pressed="false" data-option="no">No</button>
+      <input type="checkbox" name="f-sponsor" tabindex="-1" style="display:none"></div></div>
+  <div class="ashby-application-form-field-entry" data-field-path="f-why">
+    <label class="ashby-application-form-question-title" for="f-why">Why do you want to join Placeholder Analytics?</label>
+    <textarea id="f-why"></textarea></div>
+  <div data-field-path="f-ack"><fieldset class="ashby-application-form-input-checkbox-group">
+    <label class="ashby-application-form-question-title" for="f-ack">Data processing acknowledgement</label>
+    <div><input type="checkbox" id="f-ack-0" name="I agree to the processing of my data"><label for="f-ack-0">I agree to the processing of my data</label></div></fieldset></div>
+  <div data-field-path="_systemfield_eeoc_gender"><fieldset class="ashby-application-form-input-radio-group">
+    <label class="ashby-application-form-question-title" for="_systemfield_eeoc_gender">Gender</label>
+    <div><input type="radio" id="g0" name="gender"><label for="g0">Male</label></div>
+    <div><input type="radio" id="g1" name="gender"><label for="g1">Female</label></div>
+    <div><input type="radio" id="g2" name="gender"><label for="g2">Decline to self-identify</label></div></fieldset></div>
+  <button id="submit" class="ashby-application-form-submit-button">Submit Application</button>
+</form>
+<script>
+// Yes/No buttons: plain <button>s inside the form (type submit by default), like Ashby's. Their
+// click handler cancels the native submit.
+document.querySelectorAll(".ashby-application-form-input-yesno-option").forEach((b) => {
+  b.addEventListener("click", (e) => {
+    e.preventDefault();
+    b.parentElement.querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", "false"));
+    b.setAttribute("aria-pressed", "true");
+  });
+});
+// Location autocomplete: options appear only after typing.
+const loc = document.getElementById("loc");
+loc.addEventListener("input", () => {
+  document.querySelectorAll(".suggestions").forEach((m) => m.remove());
+  if (loc.value.length < 3) return;
+  const menu = document.createElement("div"); menu.className = "suggestions"; menu.setAttribute("role", "listbox");
+  ["Bengaluru, Karnataka, India", "Bengaluru Rural, Karnataka, India"].filter((o) => o.toLowerCase().startsWith(loc.value.toLowerCase())).forEach((o) => {
+    const opt = document.createElement("div"); opt.setAttribute("role", "option"); opt.textContent = o;
+    opt.addEventListener("click", () => { loc.value = o; menu.remove(); });
+    menu.appendChild(opt);
+  });
+  loc.parentElement.appendChild(menu);
+});
+</script>
+</body></html>

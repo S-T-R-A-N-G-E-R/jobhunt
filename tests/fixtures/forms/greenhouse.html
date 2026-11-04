@@ -1,0 +1,75 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Fictional Labs - ML Engineer</title>
+<script src="detector.js"></script>
+<style>.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.menu{border:1px solid #ccc}.hidden{display:none}</style></head>
+<body>
+<h1>ML Engineer</h1>
+<form id="application-form" action="/submit-endpoint" method="post">
+  <div class="field-wrapper"><label id="first_name-label" for="first_name" class="label">First Name<span aria-hidden="true">*</span></label>
+    <input id="first_name" type="text" aria-required="true" autocomplete="given-name"></div>
+  <div class="field-wrapper"><label for="last_name" class="label">Last Name<span aria-hidden="true">*</span></label>
+    <input id="last_name" type="text" aria-required="true"></div>
+  <div class="field-wrapper"><label for="email" class="label">Email<span aria-hidden="true">*</span></label>
+    <input id="email" type="text" aria-required="true"></div>
+  <div class="field-wrapper"><label for="phone" class="label">Phone<span aria-hidden="true">*</span></label>
+    <button type="button" aria-label="Select country">IN</button>
+    <input id="iti-search" type="search" role="combobox" aria-label="Search">
+    <input id="phone" type="tel" aria-required="true"></div>
+  <div class="field-wrapper"><div role="group" class="file-upload">
+    <div id="upload-label-resume" class="label upload-label">Resume/CV<span aria-hidden="true">*</span></div>
+    <button type="button">Attach</button><label class="visually-hidden" for="resume">Attach</label>
+    <input id="resume" class="visually-hidden" type="file" accept=".pdf"></div></div>
+  <div class="field-wrapper"><div role="group" class="file-upload">
+    <div id="upload-label-cover_letter" class="label upload-label">Cover Letter</div>
+    <button type="button">Attach</button><label class="visually-hidden" for="cover_letter">Attach</label>
+    <input id="cover_letter" class="visually-hidden" type="file" accept=".pdf"></div></div>
+  <div class="field-wrapper"><label for="question_1" class="label">LinkedIn Profile</label>
+    <input id="question_1" type="text"></div>
+  <div class="field-wrapper"><label for="question_2" class="label">Website</label>
+    <input id="question_2" type="text"></div>
+  <div class="field-wrapper"><label for="question_3" class="label select__label">Will you now or will you in the future require employment visa sponsorship?<span aria-hidden="true">*</span></label>
+    <div class="select" data-options="Yes|No"><div class="select__single-value"></div>
+      <input id="question_3" type="text" role="combobox" aria-required="true"></div></div>
+  <div class="field-wrapper field-wrapper--multiline"><label for="question_4" class="label">Why Fictional Labs?<span aria-hidden="true">*</span></label>
+    <textarea id="question_4" aria-required="true"></textarea></div>
+  <div class="field-wrapper field-wrapper--multiline"><label for="question_5" class="label">What is your favourite open-source project and why?</label>
+    <textarea id="question_5"></textarea></div>
+  <fieldset><legend>Privacy notice acknowledgement*</legend>
+    <label><input type="checkbox" id="privacy" required> I have read the privacy notice</label></fieldset>
+  <div class="field-wrapper"><label for="gender" class="label select__label">Gender</label>
+    <div class="select" data-options="Male|Female|Decline To Self Identify"><div class="select__single-value"></div>
+      <input id="gender" type="text" role="combobox"></div></div>
+  <div class="field-wrapper"><label for="hispanic_ethnicity" class="label select__label">Are you Hispanic/Latino?</label>
+    <div class="select" data-options="Yes|No|Decline To Self Identify"><div class="select__single-value"></div>
+      <input id="hispanic_ethnicity" type="text" role="combobox"></div></div>
+  <div class="field-wrapper hidden" id="race-wrapper"><label for="race" class="label select__label">Please identify your race</label>
+    <div class="select" data-options="American Indian or Alaskan Native|Asian|Black or African American|White|Two or More Races|Decline To Self Identify"><div class="select__single-value"></div>
+      <input id="race" type="text" role="combobox"></div></div>
+  <button id="submit" type="submit">Submit application</button>
+</form>
+<script>
+// A tiny stand-in for react-select: click opens [role=option]s, clicking one sets the value.
+document.querySelectorAll(".select").forEach((sel) => {
+  const input = sel.querySelector("input"), shown = sel.querySelector(".select__single-value");
+  const open = () => {
+    close();
+    const menu = document.createElement("div"); menu.className = "menu"; menu.setAttribute("role", "listbox");
+    const filter = input.value.toLowerCase();
+    sel.dataset.options.split("|").filter((o) => o.toLowerCase().includes(filter)).forEach((o) => {
+      const opt = document.createElement("div"); opt.setAttribute("role", "option"); opt.textContent = o;
+      opt.addEventListener("click", () => {
+        shown.textContent = o; input.value = ""; close();
+        if (input.id === "hispanic_ethnicity" && o === "No") document.getElementById("race-wrapper").classList.remove("hidden");
+      });
+      menu.appendChild(opt);
+    });
+    sel.appendChild(menu);
+  };
+  const close = () => document.querySelectorAll(".menu").forEach((m) => m.remove());
+  input.addEventListener("click", open);
+  input.addEventListener("input", open);
+  input.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
+});
+</script>
+</body></html>

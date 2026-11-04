@@ -1,0 +1,35 @@
+# Companies to watch. Copy to config/companies.yaml (git-ignored) and edit,
+# or let `uv run jobhunt company add <careers-url>` create and fill it for you.
+#
+# One entry per company. ats: greenhouse | lever | ashby
+#   name:      display name
+#   ats:       which job-board system the company uses
+#   slug:      the company's id on that system (from its careers URL)
+#   priority:  high | normal; high-priority companies get a small score boost and are scored first
+#   region:    eu (Lever only, optional): use api.eu.lever.co
+#
+# manual_check: careers pages on other systems (Workday, own site, ...). Check these by hand.
+companies:
+  - name: Cloudflare
+    ats: greenhouse
+    slug: cloudflare
+    priority: normal
+  - name: Dropbox
+    ats: greenhouse
+    slug: dropbox
+    priority: normal
+  - name: Mindtickle
+    ats: lever
+    slug: mindtickle
+    priority: normal
+  - name: Ramp
+    ats: ashby
+    slug: ramp
+    priority: normal
+  - name: Linear
+    ats: ashby
+    slug: linear
+    priority: normal
+
+manual_check: []
+#  - https://careers.example.com/jobs

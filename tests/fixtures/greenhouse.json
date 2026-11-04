@@ -1,0 +1,145 @@
+{
+ "jobs": [
+  {
+   "absolute_url": "https://job-boards.greenhouse.io/northwind/jobs/1000001",
+   "data_compliance": [
+    {
+     "type": "gdpr",
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "demographic_data_consent_applies": false
+    }
+   ],
+   "internal_job_id": 2000001,
+   "location": {
+    "name": "Bengaluru, India"
+   },
+   "metadata": [
+    {
+     "id": 3000001,
+     "name": "Employment Type",
+     "value": "Full-time",
+     "value_type": "single_select"
+    }
+   ],
+   "id": 1000001,
+   "updated_at": "2026-01-15T10:00:00-05:00",
+   "requisition_id": "NW-100",
+   "title": "Machine Learning Engineer, Search",
+   "company_name": "Northwind Analytics",
+   "first_published": "2026-01-10T09:00:00-05:00",
+   "language": "en",
+   "application_deadline": null,
+   "content": "&lt;p&gt;&lt;strong&gt;About Northwind Analytics&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Northwind Analytics is a fictional company used only in jobhunt&#x27;s test fixtures. We build tools that help small teams ship reliable software.&lt;/p&gt;&lt;p&gt;&lt;strong&gt;The role&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;As a Machine Learning Engineer, Search on the Search Relevance team you will design, build and operate production systems, work closely with product and data partners, and own your work end to end.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Build and maintain services used by thousands of customers.&lt;/li&gt;&lt;li&gt;Improve quality through testing, reviews and monitoring.&lt;/li&gt;&lt;li&gt;Mentor teammates and write clear design docs.&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;strong&gt;What we offer&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Flexible hours, learning budget &amp;amp; health cover.&lt;/p&gt;",
+   "departments": [
+    {
+     "id": 4000001,
+     "name": "Search Relevance",
+     "child_ids": [],
+     "parent_id": null
+    }
+   ],
+   "offices": [],
+   "ai_disclaimer": null,
+   "include_ai_disclaimer": null,
+   "ai_opt_out_request_url": null
+  },
+  {
+   "absolute_url": "https://job-boards.greenhouse.io/northwind/jobs/1000002",
+   "data_compliance": [
+    {
+     "type": "gdpr",
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "demographic_data_consent_applies": false
+    }
+   ],
+   "internal_job_id": 2000002,
+   "location": {
+    "name": "Remote - APAC"
+   },
+   "metadata": [
+    {
+     "id": 3000001,
+     "name": "Employment Type",
+     "value": "Full-time",
+     "value_type": "single_select"
+    }
+   ],
+   "id": 1000002,
+   "updated_at": "2026-01-15T10:00:00-05:00",
+   "requisition_id": "NW-101",
+   "title": "Senior Backend Engineer (Python)",
+   "company_name": "Northwind Analytics",
+   "first_published": "2026-01-10T09:00:00-05:00",
+   "language": "en",
+   "application_deadline": null,
+   "content": "&lt;p&gt;&lt;strong&gt;About Northwind Analytics&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Northwind Analytics is a fictional company used only in jobhunt&#x27;s test fixtures. We build tools that help small teams ship reliable software.&lt;/p&gt;&lt;p&gt;&lt;strong&gt;The role&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;As a Senior Backend Engineer (Python) on the Platform team you will design, build and operate production systems, work closely with product and data partners, and own your work end to end.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Build and maintain services used by thousands of customers.&lt;/li&gt;&lt;li&gt;Improve quality through testing, reviews and monitoring.&lt;/li&gt;&lt;li&gt;Mentor teammates and write clear design docs.&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;strong&gt;What we offer&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Flexible hours, learning budget &amp;amp; health cover.&lt;/p&gt;",
+   "departments": [
+    {
+     "id": 4000002,
+     "name": "Platform",
+     "child_ids": [],
+     "parent_id": null
+    }
+   ],
+   "offices": [],
+   "ai_disclaimer": null,
+   "include_ai_disclaimer": null,
+   "ai_opt_out_request_url": null
+  },
+  {
+   "absolute_url": "https://job-boards.greenhouse.io/northwind/jobs/1000003",
+   "data_compliance": [
+    {
+     "type": "gdpr",
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "demographic_data_consent_applies": false
+    }
+   ],
+   "internal_job_id": 2000003,
+   "location": {
+    "name": "Lisbon, Portugal"
+   },
+   "metadata": [
+    {
+     "id": 3000001,
+     "name": "Employment Type",
+     "value": "Full-time",
+     "value_type": "single_select"
+    }
+   ],
+   "id": 1000003,
+   "updated_at": "2026-01-15T10:00:00-05:00",
+   "requisition_id": "NW-102",
+   "title": "Product Designer",
+   "company_name": "Northwind Analytics",
+   "first_published": "2026-01-10T09:00:00-05:00",
+   "language": "en",
+   "application_deadline": null,
+   "content": "&lt;p&gt;&lt;strong&gt;About Northwind Analytics&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Northwind Analytics is a fictional company used only in jobhunt&#x27;s test fixtures. We build tools that help small teams ship reliable software.&lt;/p&gt;&lt;p&gt;&lt;strong&gt;The role&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;As a Product Designer on the Design team you will design, build and operate production systems, work closely with product and data partners, and own your work end to end.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Build and maintain services used by thousands of customers.&lt;/li&gt;&lt;li&gt;Improve quality through testing, reviews and monitoring.&lt;/li&gt;&lt;li&gt;Mentor teammates and write clear design docs.&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;strong&gt;What we offer&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Flexible hours, learning budget &amp;amp; health cover.&lt;/p&gt;",
+   "departments": [
+    {
+     "id": 4000003,
+     "name": "Design",
+     "child_ids": [],
+     "parent_id": null
+    }
+   ],
+   "offices": [],
+   "ai_disclaimer": null,
+   "include_ai_disclaimer": null,
+   "ai_opt_out_request_url": null
+  }
+ ],
+ "meta": {
+  "total": 3
+ }
+}
