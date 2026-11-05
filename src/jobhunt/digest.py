@@ -3,7 +3,7 @@ import json
 import logging
 import re
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import httpx
 
@@ -72,6 +72,27 @@ def _notes(run: sqlite3.Row | None) -> list[str]:
             f"ℹ️ {run['escalated']} escalated to paid model · {run['score_failed']} failed scoring"
         )
     return notes
+
+
+def late_note(conn: sqlite3.Connection, run: sqlite3.Row | None) -> str | None:
+    """JOBHUNT_SCHEDULED_AT ("HH:MM" local, set by the cloud workflow on scheduled runs): if
+    this is the day's first run and it started over 2 hours after that time, say so."""
+    at = env("JOBHUNT_SCHEDULED_AT")
+    if not at or run is None:
+        return None
+    earlier = conn.execute(
+        "SELECT 1 FROM runs WHERE run_date = ? AND id < ?", (run["run_date"], run["id"])
+    ).fetchone()
+    started = datetime.fromisoformat(run["started_at"]).astimezone(config.local_tz())
+    h, m = map(int, at.split(":"))
+    late = started - started.replace(hour=h, minute=m, second=0, microsecond=0)
+    if earlier or late <= timedelta(hours=2):
+        return None
+    hours, minutes = divmod(int(late.total_seconds()) // 60, 60)
+    return (
+        f"⏰ Today's run started {hours}h {minutes:02d}m after {at}: "
+        "GitHub delayed or skipped the scheduled run."
+    )
 
 
 def _header(n: int, run: sqlite3.Row | None) -> str:
@@ -178,7 +199,8 @@ def build(conn: sqlite3.Connection, profile: Profile, run: sqlite3.Row | None):
     """Returns (header messages, [(job, html block)] with a stretch-section header row
     (job None) before the first stretch role, markdown text, jobs included)."""
     jobs, stretch = pending_jobs(conn, profile), stretch_jobs(conn, profile)
-    top = _notes(run) + [_header(len(jobs), run)]
+    late = late_note(conn, run)
+    top = ([late] if late else []) + _notes(run) + [_header(len(jobs), run)]
     blocks = [(j, _html_block(_fields(j))) for j in jobs]
     md_parts = ["\n".join(top)] + [_md_block(_fields(j)) for j in jobs]
     if stretch:
