@@ -9,9 +9,15 @@
 name: daily
 
 on:
+  # GitHub delays scheduled runs by hours at busy times and sometimes drops them. Every slot
+  # reads new Apply/Skip presses; only the first one that fires on a given day (or after a
+  # partial run) does real work, the rest exit in seconds. Odd minutes avoid the top-of-hour rush.
   schedule:
-    - cron: "17 2 * * *" # 02:17 UTC = 07:47 IST. An odd minute avoids the top-of-hour rush.
-    - cron: "47 6 * * *" # catch-up at 12:17 IST: reads new Apply/Skip presses, then does real work only if the morning run was partial or missed
+    - cron: "17 2 * * *" # 07:47 IST: the intended run
+    - cron: "23 3 * * *" # 08:53 IST: catch-up
+    - cron: "41 4 * * *" # 10:11 IST: catch-up
+    - cron: "47 6 * * *" # 12:17 IST: catch-up
+    - cron: "13 9 * * *" # 14:43 IST: catch-up
   workflow_dispatch:
     inputs:
       force:
@@ -37,6 +43,9 @@ permissions:
 
 env:
   JOBHUNT_TIMEZONE: Asia/Kolkata # runners are on UTC; "already ran today" uses this date
+  # The intended local start (the first cron). A scheduled run's digest notes if it started
+  # more than 2 hours after this. Change it with the first cron.
+  JOBHUNT_SCHEDULED_AT: ${{ github.event_name == 'schedule' && '07:47' || '' }}
   JOBHUNT_RUNNER_REPO: ${{ github.repository }}
   GH_TOKEN: ${{ github.token }}
   OLLAMA_HOST: ${{ vars.JOBHUNT_LLM == 'runner' && 'http://localhost:11434' || 'https://ollama.com' }}
@@ -108,27 +117,37 @@ jobs:
 
       # Output goes to a file, not the log, so company names and job titles stay out of it.
       # Errors still reach you: jobhunt sends crashes to Telegram itself.
+      # changed=false (a slot after today's run, with no new button presses) skips every save.
       - name: Run jobhunt
+        id: run
         run: |
           mkdir -p logs
+          before=$(sha1sum data/jobhunt.db 2>/dev/null || true)
+          status=0
           uv run jobhunt run --quiet ${{ !inputs.force && '--if-not-run-today' || '' }} \
-            > logs/run.out 2>&1
+            > logs/run.out 2>&1 || status=$?
+          if [ "$before" = "$(sha1sum data/jobhunt.db 2>/dev/null || true)" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"; echo "Nothing new: today's run already done."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+          exit $status
 
       - name: Compact DB
-        if: always() && steps.restore.outcome == 'success'
+        if: always() && steps.restore.outcome == 'success' && steps.run.outputs.changed != 'false'
         run: |
           uv run python -c "import sqlite3; sqlite3.connect('data/jobhunt.db').execute('VACUUM')"
           echo "DB size: $(du -m data/jobhunt.db | cut -f1) MB"
 
       - name: Save DB cache
-        if: always() && steps.restore.outcome == 'success'
+        if: always() && steps.restore.outcome == 'success' && steps.run.outputs.changed != 'false'
         uses: actions/cache/save@v4
         with:
           path: data/jobhunt.db
           key: ${{ env.DB_CACHE_KEY }}
 
       - name: Upload DB backup
-        if: always() && steps.restore.outcome == 'success'
+        if: always() && steps.restore.outcome == 'success' && steps.run.outputs.changed != 'false'
         uses: actions/upload-artifact@v4
         with:
           name: jobhunt-db
@@ -137,7 +156,7 @@ jobs:
           compression-level: 9
 
       - name: Keep only the newest 3 DB artifacts
-        if: always() && steps.restore.outcome == 'success'
+        if: always() && steps.restore.outcome == 'success' && steps.run.outputs.changed != 'false'
         run: |
           gh api "repos/$GITHUB_REPOSITORY/actions/artifacts?name=jobhunt-db&per_page=100" \
             --jq '.artifacts | sort_by(.created_at) | reverse | .[3:] | .[].id' |
