@@ -106,6 +106,12 @@ The run deletes the release after saving the DB.
 
 Model and think level come from env overrides (`JOBHUNT_LLM_MODEL`, `JOBHUNT_LLM_THINK`), so one `profile.yaml` serves both the laptop and the cloud, and its `profile_hash` doesn't change.
 
+### Five cron slots, because GitHub delays and drops scheduled runs
+Scheduled runs started 7–8 hours late on one day and the morning slot was skipped outright on the next. Every slot (07:47 to 14:43 IST) runs the same job behind `--if-not-run-today`, so the first that fires does the work.
+- **Guard placement:** the DB is still restored on skipped slots (about a second), because both the guard and the button presses need it. What's skipped is everything after the run when the DB file is unchanged: compacting, the cache save, the artifact upload and pruning.
+- **Late note:** only the day's first run, only for scheduled events, only past 2 hours, so a manual run or a retry after a partial run doesn't blame GitHub.
+- **Where:** `deploy/github-actions/daily.yml`, `digest.late_note`
+
 ### Quota errors are not scoring failures
 When Ollama Cloud answers 402/429 (or a 4xx naming a usage limit, quota or credits), scoring stops for the run. The remaining jobs stay unscored, with no `score_failed` row, so a later run picks them up. The count is stored in `runs.quota_skipped` and shown at the top of the digest. These jobs are never escalated to the paid model automatically, because a quota problem isn't a sign the job needs a stronger model.
 
@@ -131,7 +137,7 @@ Code never clicks a submit button, never presses Enter in a field (implicit subm
 - **Where:** `apply/store.py`
 
 ### Button presses: read at the start of every run, newest wins
-Nothing listens to Telegram live. Telegram keeps unread updates for 24 hours, so presses are read with `getUpdates` at the start of every cloud run (before the "already ran today" guard, so the 12:17 catch-up also reads them) and at the start of `jobhunt apply`. Whoever reads an update stores it and confirms it with a higher offset, so it isn't read again.
+Nothing listens to Telegram live. Telegram keeps unread updates for 24 hours, so presses are read with `getUpdates` at the start of every cloud run (before the "already ran today" guard, so every catch-up slot also reads them) and at the start of `jobhunt apply`. Whoever reads an update stores it and confirms it with a higher offset, so it isn't read again.
 - **Storage:** keyed by job; a decision with a higher `update_id` replaces the old one. A replay of the same press changes nothing, so the cloud's copy (it comes down with `pull-db` and is merged on the laptop) can't undo a newer terminal pick.
 - **Feedback:** `answerCallbackQuery` is tried but usually fails, because the query is too old by then. The button spins for a few seconds on the phone. The message's keyboard is then edited to put a ✓ on the chosen button.
 - **Only your chat:** presses from any other chat id are ignored.

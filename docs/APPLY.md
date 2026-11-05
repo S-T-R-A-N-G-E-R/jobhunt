@@ -31,7 +31,7 @@ Discovery (fetch, score, digest) keeps running in the cloud. Applying runs on yo
 
 ### Choosing jobs
 
-Each job in the digest arrives as its own Telegram message with **✅ Apply** and **⏭ Skip** buttons. Only the first message of a digest makes a sound. Press either button whenever you like. Nothing is listening live, so the button spins for a few seconds and then stops. The press is saved at the next cloud run (twice a day) or the next `jobhunt apply`, whichever comes first, and the message then shows a ✓ on the button you chose. Press the other button later to change your mind: the newest press wins.
+Each job in the digest arrives as its own Telegram message with **✅ Apply** and **⏭ Skip** buttons. Only the first message of a digest makes a sound. Press either button whenever you like. Nothing is listening live, so the button spins for a few seconds and then stops. The press is saved at the next cloud slot (five a day, 07:47–14:43 IST) or the next `jobhunt apply`, whichever comes first, and the message then shows a ✓ on the button you chose. Press the other button later to change your mind: the newest press wins.
 
 ### One job, step by step
 

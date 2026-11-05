@@ -103,7 +103,7 @@ Nothing listens to Telegram live; presses wait on Telegram's side until someone 
 3. Each press is stored in the reader's `decisions` table (`jobhunt.db` for runs, `applications.db` for `jobhunt apply`; newest `update_id` wins), the button gets a ✓ via `editMessageReplyMarkup`, and the update is confirmed by asking for a higher offset.
 4. On the laptop, `apply/store.merge_cloud` copies the cloud's decisions (from the pulled `jobhunt.db`) into `applications.db`. Terminal picks (`apply pick`) are written there directly.
 
-**The 24-hour limit:** Telegram drops unread updates after 24 hours. With the cloud's two daily runs (morning and the 12:17 IST catch-up), every press is read within 20 hours. If no run or `jobhunt apply` happens for a full day, older presses are lost; press the button again or use `apply pick`.
+**The 24-hour limit:** Telegram drops unread updates after 24 hours. With the cloud's five daily slots (07:47 to 14:43 IST, each reading presses even when the day's run is already done), a press normally waits at most about 17 hours, overnight. If no run or `jobhunt apply` happens for a full day, older presses are lost; press the button again or use `apply pick`.
 
 ## The apply session (`apply/session.run`)
 
@@ -163,7 +163,7 @@ The response is validated with pydantic.
 
 ### In the cloud
 
-`deploy/github-actions/daily.yml` is the workflow for a private runner repo. Two crons (07:47 and 12:17 IST) check out this repo and run `jobhunt cloud write-files`, `jobhunt cloud restore-db` and `jobhunt run --if-not-run-today`, then save the DB to the cache and an artifact. See [CLOUD.md](CLOUD.md).
+`deploy/github-actions/daily.yml` is the workflow for a private runner repo. Five crons (07:47 IST plus catch-ups until 14:43 IST, because GitHub delays and drops scheduled runs) check out this repo and run `jobhunt cloud write-files`, `jobhunt cloud restore-db` and `jobhunt run --if-not-run-today`, then save the DB to the cache and an artifact unless it's unchanged. See [CLOUD.md](CLOUD.md).
 
 ### On macOS (local alternative)
 

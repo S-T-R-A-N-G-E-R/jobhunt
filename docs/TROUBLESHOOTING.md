@@ -51,7 +51,7 @@ The bot token is never written to logs. httpx's request logging is turned down f
 | `Old agent still installed: …` | Run `jobhunt schedule install`. It removes agents installed under an older label. |
 | `launchctl bootstrap failed: …` | Run `jobhunt schedule uninstall`, then `install` again. |
 | Ran at 08:00 but nothing was scored | Ollama wasn't up yet. The run is marked `partial` and the hourly tick retries it. |
-| Ran with no network (every fetch failed, or Telegram unreachable) | Nothing to do: the run is marked `partial`, and the next tick (or the cloud's catch-up run) retries it. Jobs are marked sent only after Telegram accepts them. |
+| Ran with no network (every fetch failed, or Telegram unreachable) | Nothing to do: the run is marked `partial`, and the next tick (or the cloud's next slot) retries it. Jobs are marked sent only after Telegram accepts them. |
 | `Already ran successfully today.` | The `--if-not-run-today` guard is working. Use `jobhunt run` without the flag to force a run. |
 | A run crashed | You get a Telegram message saying `❌ jobhunt run failed: …` with the log path. Check `logs/jobhunt.log`. |
 

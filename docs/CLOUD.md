@@ -1,6 +1,6 @@
 # Running in the cloud (GitHub Actions)
 
-The recommended way to run discovery every day: a GitHub Actions workflow in a private repo of yours fetches, scores and sends the digest twice a day (07:47 and a 12:17 IST catch-up), whether or not your laptop is on. The laptop is then for applying ([APPLY.md](APPLY.md)) and manual commands. Running it locally instead is covered in [SETUP.md](SETUP.md#8-run-it-every-day).
+The recommended way to run discovery every day: a GitHub Actions workflow in a private repo of yours fetches, scores and sends the digest every morning (07:47 IST, with catch-up slots until 14:43 IST), whether or not your laptop is on. The laptop is then for applying ([APPLY.md](APPLY.md)) and manual commands. Running it locally instead is covered in [SETUP.md](SETUP.md#8-run-it-every-day).
 
 ## How it fits together
 
@@ -90,12 +90,30 @@ Caches unused for 7 days are evicted, and so are artifacts after 7 days. If the 
 
 **Size:** the DB is mostly job descriptions. Descriptions of jobs inactive for 30+ days are dropped (scores are kept), and the DB is vacuumed before saving. A DB of about 50 MB compresses to about 9 MB, so three artifacts use about 30 MB of the 500 MB free artifact storage.
 
+## The schedule, and GitHub's delays
+
+GitHub starts scheduled workflows late at busy times (hours late has been seen) and sometimes skips them entirely. So the workflow has five slots, all at odd minutes:
+
+| UTC | IST | Role |
+|:--|:--|:--|
+| 02:17 | 07:47 | the intended run |
+| 03:23 | 08:53 | catch-up |
+| 04:41 | 10:11 | catch-up |
+| 06:47 | 12:17 | catch-up |
+| 09:13 | 14:43 | catch-up |
+
+- **One real run a day:** every slot runs `jobhunt run --if-not-run-today`. The first one that fires does the work; later ones find today's run done and exit. A `partial` run (no network, Ollama Cloud down) is retried by the next slot.
+- **Every slot reads button presses** before the guard, so no press waits more than a few hours, well inside Telegram's 24-hour limit.
+- **Skipped slots save nothing:** when the DB is byte-for-byte unchanged (today's run already done and no new presses), compacting, caching and the artifact upload are skipped. The job takes about 20 seconds.
+- **Late-run note:** if the day's first run starts more than 2 hours after 07:47 IST (`JOBHUNT_SCHEDULED_AT` in the workflow), the digest's first line says GitHub delayed or skipped the scheduled run. Manual runs (`cloud run`) never get the note.
+- **Changing the time:** edit the crons and `JOBHUNT_SCHEDULED_AT` together.
+
 ## Minutes
 
-On GitHub Free, private repos get $12 a month of Actions compute, about 2,000 Linux minutes.
-- **Typical run:** about 1 minute, made up of about 30 s of setup, about 30 s of fetching from around 40 boards, and a few new jobs scored at about 2 s each.
-- **Catch-up run (12:17 IST):** finishes in about 1 minute when the morning run succeeded. It only does real work if the morning run was partial or never ran.
-- **Total:** about **60–100 minutes a month**, under 5% of the allowance. Runner mode is slower per job.
+On GitHub Free, private repos get $12 a month of Actions compute, about 2,000 Linux minutes. GitHub rounds each job up to a whole minute.
+- **The day's real run:** usually 1–2 billed minutes: about 30 s of setup, about 30 s of fetching from around 40 boards, and a few new jobs scored at about 2 s each.
+- **Each skipped slot:** about 20 s, billed as 1 minute. Four a day.
+- **Total:** about 5–6 minutes a day, so **about 150–190 minutes a month**, under 10% of the allowance. Runner mode is slower per job.
 
 ## Privacy in the logs
 
@@ -114,4 +132,4 @@ Each run also reads your Apply / Skip presses from Telegram and stores them in t
 | `No saved DB (no cache, no artifact)` | `uv run jobhunt cloud seed-db` |
 | Digest says "Ollama Cloud free credits exhausted" | Wait for the reset, set `JOBHUNT_LLM=runner`, or enable the paid fallback |
 | `Set JOBHUNT_RUNNER_REPO=…` | Add it to `.env` on the laptop |
-| A scheduled run is late | GitHub delays cron runs at busy times, and the catch-up run covers a skipped one |
+| A scheduled run is late, or the digest starts with ⏰ | GitHub delayed or dropped the 07:47 slot; a catch-up slot did the run. Nothing to fix. If every slot is dropped, run `uv run jobhunt cloud run`. |

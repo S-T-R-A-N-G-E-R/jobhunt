@@ -37,7 +37,7 @@ Tap Apply, and later `jobhunt apply` opens each form on your laptop, fills it fr
 <td width="50%" valign="top">
 
 ### 🛰️ Daily discovery
-Polls the **official public job-board APIs** of Greenhouse, Lever and Ashby, twice a day on **GitHub Actions** from a private repo, or on your own machine. No scraping, no logins, idempotent re-runs.
+Polls the **official public job-board APIs** of Greenhouse, Lever and Ashby, every morning on **GitHub Actions** from a private repo (with catch-up slots for when GitHub runs late), or on your own machine. No scraping, no logins, idempotent re-runs.
 
 ### 🧠 Scoring, cloud or local
 **Ollama Cloud** (`gpt-oss:20b`) in the cloud run, or a **local model via Ollama** on your machine, with schema-constrained JSON and guardrails in code. An optional paid fallback is capped and counted.
