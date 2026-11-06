@@ -27,3 +27,10 @@ def test_legacy_agents_detected_and_removed(tmp_path, monkeypatch):
 def test_label_is_generic():
     assert schedule.LABEL == "local.jobhunt.daily"
     assert schedule.plist()["Label"] == schedule.LABEL
+
+
+def test_cloud_mode_starts_the_workflow_twice_a_day():
+    p = schedule.plist(cloud=True)
+    assert p["ProgramArguments"][-2:] == ["cloud", "run"]  # not forced: the guard applies
+    assert p["StartCalendarInterval"] == [{"Hour": 9, "Minute": 30}, {"Hour": 14, "Minute": 0}]
+    assert "StartInterval" not in p and "RunAtLoad" not in p

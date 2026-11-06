@@ -1,4 +1,6 @@
-"""macOS launchd agent: daily 08:00, plus hourly catch-up (guarded by --if-not-run-today)."""
+"""macOS launchd agent. Local mode: daily 08:00 plus hourly catch-up (guarded by
+--if-not-run-today). Cloud mode: start the cloud workflow at 09:30 and 14:00, a backup for
+GitHub's delayed or dropped crons (the workflow's own guard makes it a no-op once done)."""
 
 import os
 import plistlib
@@ -18,26 +20,30 @@ def domain() -> str:
     return f"gui/{os.getuid()}"
 
 
-def plist() -> dict:
+CLOUD_TIMES = [(9, 30), (14, 0)]
+
+
+def plist(cloud: bool = False) -> dict:
     uv = shutil.which("uv") or "/opt/homebrew/bin/uv"
     root = str(config.ROOT)
+    base = [uv, "run", "--directory", root, "jobhunt"]
+    # A missed time (laptop asleep) runs once on wake.
+    when = (
+        {"StartCalendarInterval": [{"Hour": h, "Minute": m} for h, m in CLOUD_TIMES]}
+        if cloud
+        else {
+            "StartCalendarInterval": {"Hour": 8, "Minute": 0},
+            "StartInterval": 3600,
+            "RunAtLoad": True,
+        }
+    )
     return {
         "Label": LABEL,
-        "ProgramArguments": [
-            uv,
-            "run",
-            "--directory",
-            root,
-            "jobhunt",
-            "run",
-            "--if-not-run-today",
-            "--quiet",
-        ],
+        "ProgramArguments": base
+        + (["cloud", "run"] if cloud else ["run", "--if-not-run-today", "--quiet"]),
         "WorkingDirectory": root,
         "EnvironmentVariables": {"PATH": PATH},
-        "StartCalendarInterval": {"Hour": 8, "Minute": 0},
-        "StartInterval": 3600,
-        "RunAtLoad": True,
+        **when,
         "StandardOutPath": str(config.LOG_DIR / "launchd.out.log"),
         "StandardErrorPath": str(config.LOG_DIR / "launchd.err.log"),
     }
@@ -72,11 +78,11 @@ def remove_legacy() -> list[str]:
     return removed
 
 
-def install() -> str:
+def install(cloud: bool = False) -> str:
     removed = remove_legacy()
     config.LOG_DIR.mkdir(exist_ok=True)
     PLIST_PATH.parent.mkdir(parents=True, exist_ok=True)
-    PLIST_PATH.write_bytes(plistlib.dumps(plist()))
+    PLIST_PATH.write_bytes(plistlib.dumps(plist(cloud)))
     launchctl("bootout", f"{domain()}/{LABEL}")  # ignore "not loaded"
     r = launchctl("bootstrap", domain(), str(PLIST_PATH))
     if r.returncode != 0:
