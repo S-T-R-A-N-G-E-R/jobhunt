@@ -52,6 +52,34 @@ def stretch_jobs(conn: sqlite3.Connection, profile: Profile) -> list[sqlite3.Row
     ).fetchall()
 
 
+NEAR_MISS_MAX = 2  # near misses shown when the main list has fewer than this many jobs
+
+
+def near_miss_range() -> tuple[int, int] | None:
+    """JOBHUNT_NEAR_MISS: "55-69" (the default) or "off". An env setting rather than
+    profile.yaml, because any profile.yaml change makes every score stale."""
+    value = env("JOBHUNT_NEAR_MISS", "55-69")
+    if value.lower() == "off":
+        return None
+    lo, hi = (int(x) for x in value.split("-"))
+    return lo, hi
+
+
+def near_miss_jobs(
+    conn: sqlite3.Connection, main: list[sqlite3.Row], exclude: set[int]
+) -> list[sqlite3.Row]:
+    """When the main list is short: the best unsent jobs scoring in the near-miss range."""
+    rng = near_miss_range()
+    if rng is None or len(main) >= NEAR_MISS_MAX:
+        return []
+    rows = conn.execute(
+        f"""{_UNSENT_SCORED} AND s.score BETWEEN ? AND ?
+           ORDER BY s.score DESC, j.first_seen_at DESC LIMIT ?""",
+        (*rng, NEAR_MISS_MAX + len(exclude)),
+    ).fetchall()
+    return [r for r in rows if r["id"] not in exclude][:NEAR_MISS_MAX]
+
+
 def _notes(run: sqlite3.Row | None) -> list[str]:
     """Status lines about the run: Ollama, fetch errors, escalations/failures."""
     if run is None:
@@ -197,13 +225,22 @@ def keyboard(job_id: int, chosen: str | None = None) -> dict:
 
 
 def build(conn: sqlite3.Connection, profile: Profile, run: sqlite3.Row | None):
-    """Returns (header messages, [(job, html block)] with a stretch-section header row
-    (job None) before the first stretch role, markdown text, jobs included)."""
+    """Returns (header messages, [(job, html block)] with a section-header row (job None)
+    before the near misses and before the stretch roles, markdown text, jobs included)."""
     jobs, stretch = pending_jobs(conn, profile), stretch_jobs(conn, profile)
     late = late_note(conn, run)
     top = ([late] if late else []) + _notes(run) + [_header(len(jobs), run)]
+    near = near_miss_jobs(conn, jobs, {j["id"] for j in stretch})
     blocks = [(j, _html_block(_fields(j))) for j in jobs]
     md_parts = ["\n".join(top)] + [_md_block(_fields(j)) for j in jobs]
+    if near:
+        lo, hi = near_miss_range()
+        title = f"Near misses ({len(near)}, scored {lo}–{hi})"
+        blocks.append((None, f"<b>🔎 {title}</b>"))
+        md_parts.append(f"## {title}")
+        for j in near:
+            blocks.append((j, _html_block(_fields(j))))
+            md_parts.append(_md_block(_fields(j)))
     if stretch:
         blocks.append((None, f"<b>🧗 Stretch roles</b> ({len(stretch)}, above your level)"))
         md_parts.append(f"## Stretch roles ({len(stretch)}, above your level)")
@@ -212,7 +249,7 @@ def build(conn: sqlite3.Connection, profile: Profile, run: sqlite3.Row | None):
             blocks.append((j, _html_block(f)))
             md_parts.append(_md_block(f))
     header = split_messages([html.escape("\n".join(top), quote=False)])
-    return header, blocks, "\n\n".join(md_parts), jobs + stretch
+    return header, blocks, "\n\n".join(md_parts), jobs + near + stretch
 
 
 def telegram(

@@ -343,3 +343,36 @@ def test_migration_backfills_uncapped_score_where_known(home):
     conn.close()
     rows = db.connect().execute("SELECT score, uncapped_score FROM scores ORDER BY id")
     assert [tuple(x) for x in rows] == [(80, 80), (30, 30), (40, None)]  # the cap hid 40's
+
+
+def scored(score, reason="Python services", gap="On-call rota"):
+    return json.dumps(GOOD_SCORE | {"score": score, "reasons": [reason], "red_flags": [gap]})
+
+
+def test_near_misses_fill_a_short_list_once(home, monkeypatch):
+    llm = FakeLLM([scored(62), scored(50)])
+    tg = FakeTelegram()
+    r, conn = run(llm=llm, tg=tg)
+    header, section, job = tg.messages
+    assert header.startswith("0 new matches today")
+    assert section == "<b>🔎 Near misses (1, scored 55–69)</b>"  # the 50 is out of range
+    assert "⭐ 62" in job and "✅ Python services" in job and "🚩 On-call rota" in job
+    assert "reply_markup" in tg.sent[2] and r["sent"] == 1
+    tg2 = FakeTelegram()
+    run(tg=tg2)
+    assert tg2.messages == []  # marked sent: never repeated
+
+    monkeypatch.setenv("JOBHUNT_NEAR_MISS", "45-55")
+    from jobhunt import digest
+
+    assert digest.near_miss_range() == (45, 55)
+    monkeypatch.setenv("JOBHUNT_NEAR_MISS", "off")
+    assert digest.near_miss_range() is None
+
+
+def test_no_near_misses_when_the_main_list_has_two(home):
+    from jobhunt import digest
+
+    _, conn = run(llm=FakeLLM([scored(62), scored(50)]), tg=FakeTelegram(down=True))  # unsent
+    assert len(digest.near_miss_jobs(conn, [], set())) == 1
+    assert digest.near_miss_jobs(conn, ["a", "b"], set()) == []
