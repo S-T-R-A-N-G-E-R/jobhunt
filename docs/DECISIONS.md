@@ -109,8 +109,12 @@ Model and think level come from env overrides (`JOBHUNT_LLM_MODEL`, `JOBHUNT_LLM
 ### Five cron slots, because GitHub delays and drops scheduled runs
 Scheduled runs started 7–8 hours late on one day and the morning slot was skipped outright on the next. Every slot (07:47 to 14:43 IST) runs the same job behind `--if-not-run-today`, so the first that fires does the work.
 - **Guard placement:** the DB is still restored on skipped slots (about a second), because both the guard and the button presses need it. What's skipped is everything after the run when the DB file is unchanged: compacting, the cache save, the artifact upload and pruning.
-- **Late note:** only the day's first run, only for scheduled events, only past 2 hours, so a manual run or a retry after a partial run doesn't blame GitHub.
+- **Late note:** shown when no message has reached Telegram yet that day and the run started more than 2 hours after 07:47 IST, whatever started it (a late slot, the laptop backup, a retry after a failed send).
 - **Where:** `deploy/github-actions/daily.yml`, `digest.late_note`
+
+### A laptop backup trigger, and failed sends turn the run red
+On 2026-11-06 GitHub fired none of the four morning slots by 12:30 IST (GitHub Actions incidents on 2026-11-04 and 2026-11-05 too). A workflow can't notice that it never started, so the check lives outside GitHub: `jobhunt schedule install --cloud` starts the workflow from the laptop at 09:30 and 14:00, behind the same guard. A third-party cron service was rejected because it would hold a GitHub token. Separately, a run whose Telegram send failed used to finish green (status `partial`); `jobhunt run` now exits 1 in that case, so the Actions run is red and GitHub emails about it.
+- **Where:** `schedule.plist(cloud=True)`, `cli.run`
 
 ### Quota errors are not scoring failures
 When Ollama Cloud answers 402/429 (or a 4xx naming a usage limit, quota or credits), scoring stops for the run. The remaining jobs stay unscored, with no `score_failed` row, so a later run picks them up. The count is stored in `runs.quota_skipped` and shown at the top of the digest. These jobs are never escalated to the paid model automatically, because a quota problem isn't a sign the job needs a stronger model.

@@ -29,7 +29,7 @@ If the cloud runs your daily job, don't run `jobhunt run` on the laptop: its DB 
 | `jobhunt resume import <pdf>` | Extract your resume PDF into `data/resume.md`. |
 | `jobhunt llm test` | Check the local model (and the paid one, if configured) with a tiny prompt. |
 | `jobhunt calibrate --n 15` | Score the same jobs with the local and paid models side by side. Needs `ANTHROPIC_API_KEY`. |
-| `jobhunt schedule install` / `uninstall` / `status` | Manage the macOS launchd agent. |
+| `jobhunt schedule install` / `uninstall` / `status` | Manage the macOS launchd agent. `install --cloud` instead starts the cloud workflow at 09:30 and 14:00, a backup for GitHub's dropped crons. |
 | `jobhunt cloud push-secrets` / `seed-db` / `pull-db` / `run` | Run the daily job on GitHub Actions instead of your machine. See [CLOUD.md](CLOUD.md). |
 | `jobhunt apply` (`--limit`, `--job <id>`, `--no-pull`) | Assisted applying on your laptop: fills each approved job's form; you press Submit. See [APPLY.md](APPLY.md). |
 | `jobhunt apply pick` / `queue` / `status` / `prepare <id> [--letter]` | Decide in the terminal, list approved jobs, see applications, or draft without filling. |

@@ -105,15 +105,26 @@ GitHub starts scheduled workflows late at busy times (hours late has been seen) 
 - **One real run a day:** every slot runs `jobhunt run --if-not-run-today`. The first one that fires does the work; later ones find today's run done and exit. A `partial` run (no network, Ollama Cloud down) is retried by the next slot.
 - **Every slot reads button presses** before the guard, so no press waits more than a few hours, well inside Telegram's 24-hour limit.
 - **Skipped slots save nothing:** when the DB is byte-for-byte unchanged (today's run already done and no new presses), compacting, caching and the artifact upload are skipped. The job takes about 20 seconds.
-- **Late-run note:** if the day's first run starts more than 2 hours after 07:47 IST (`JOBHUNT_SCHEDULED_AT` in the workflow), the digest's first line says GitHub delayed or skipped the scheduled run. Manual runs (`cloud run`) never get the note.
+- **Late-run note:** if nothing has reached Telegram yet today and a run starts more than 2 hours after 07:47 IST (`JOBHUNT_SCHEDULED_AT` in the workflow), its digest opens with "⏰ Nothing reached you before this…". That covers a day GitHub delayed or dropped, and a retry after a failed send.
+- **A failed send is a red run:** if Telegram rejects the digest, `jobhunt run` exits 1, so the Actions run fails (GitHub emails you about failed runs by default) and the next slot retries.
 - **Changing the time:** edit the crons and `JOBHUNT_SCHEDULED_AT` together.
+
+### Laptop backup trigger
+
+On some days GitHub fires none of the five slots for hours (on 2026-11-06, none of the four morning slots had started by 12:30 IST, during GitHub Actions incidents). Nothing inside GitHub can notice that, so the laptop can start the workflow itself:
+
+```bash
+uv run jobhunt schedule install --cloud
+```
+
+This launchd agent runs `jobhunt cloud run` (not forced) at 09:30 and 14:00 laptop time. If the day's run is already done, the workflow exits in seconds; if not, it does the run, and after 09:47 the digest carries the ⏰ line. If the laptop is asleep at those times, the agent runs once when it wakes. It replaces the local-run agent (`schedule install` without `--cloud`); `schedule uninstall` removes it.
 
 ## Minutes
 
 On GitHub Free, private repos get $12 a month of Actions compute, about 2,000 Linux minutes. GitHub rounds each job up to a whole minute.
 - **The day's real run:** usually 1–2 billed minutes: about 30 s of setup, about 30 s of fetching from around 40 boards, and a few new jobs scored at about 2 s each.
-- **Each skipped slot:** about 20 s, billed as 1 minute. Four a day.
-- **Total:** about 5–6 minutes a day, so **about 150–190 minutes a month**, under 10% of the allowance. Runner mode is slower per job.
+- **Each skipped slot:** about 20 s, billed as 1 minute. Four a day, plus two from the laptop backup trigger if installed.
+- **Total:** about 5–8 minutes a day, so **about 150–250 minutes a month**, under 15% of the allowance. Runner mode is slower per job.
 
 ## Privacy in the logs
 
@@ -132,4 +143,5 @@ Each run also reads your Apply / Skip presses from Telegram and stores them in t
 | `No saved DB (no cache, no artifact)` | `uv run jobhunt cloud seed-db` |
 | Digest says "Ollama Cloud free credits exhausted" | Wait for the reset, set `JOBHUNT_LLM=runner`, or enable the paid fallback |
 | `Set JOBHUNT_RUNNER_REPO=…` | Add it to `.env` on the laptop |
-| A scheduled run is late, or the digest starts with ⏰ | GitHub delayed or dropped the 07:47 slot; a catch-up slot did the run. Nothing to fix. If every slot is dropped, run `uv run jobhunt cloud run`. |
+| A scheduled run is late, or the digest starts with ⏰ | GitHub delayed or dropped the morning slots, or an earlier send failed; a later slot did the run. If this happens often, install the [laptop backup trigger](#laptop-backup-trigger). Right now: `uv run jobhunt cloud run`. |
+| A red run with "Telegram send failed" in the job | The bot token or chat ID in the runner's secrets is wrong (or Telegram was down). Check `.env`, then `uv run jobhunt cloud push-secrets` and `uv run jobhunt cloud run`. |
