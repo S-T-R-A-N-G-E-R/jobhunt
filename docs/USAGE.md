@@ -59,6 +59,8 @@ Edit `src/jobhunt/prompts/score_job.md`. It is filled with your profile, your re
 | `llm.local.model` | `qwen3.5:4b` | Any model you've pulled in Ollama |
 | `llm.local.num_ctx` | 16384 | Context window; it must fit the profile, resume and job |
 
+One digest setting lives outside `profile.yaml`, because any edit to `profile.yaml` makes every score stale: `JOBHUNT_NEAR_MISS` (default `55-69`, or `off`), in `.env` locally or as a repository variable in the runner repo (see below).
+
 Applying has its own settings (`settings.max_per_session`, `settings.writing`) in `answers.yaml`: see [APPLY.md](APPLY.md#the-writing-model).
 
 ### Stretch roles
@@ -66,6 +68,10 @@ Applying has its own settings (`settings.max_per_session`, `settings.writing`) i
 A role the model marks as needing more seniority than you have is capped at 40, so it never reaches the main list. If such a role would have scored at least `min_score_for_digest` without the cap, it can appear in a **Stretch roles** section after the main matches. The section shows up to `digest.stretch_max` of them, best first, each with its score before the cap and the main reason it's above your level. Like any digest job, a stretch role is sent only once.
 
 Scores from before this feature only kept the capped value, so older capped jobs don't appear as stretch roles; newly scored ones do.
+
+### Near misses
+
+When the main list has fewer than 2 jobs, the digest adds a **Near misses** section: up to 2 of the best unsent jobs scoring in `JOBHUNT_NEAR_MISS` (55–69 by default), each with its top reason (✅) and main gap (🚩), and Apply / Skip buttons. They're marked sent, so they never repeat. In the cloud, set the range under **Settings → Secrets and variables → Actions → Variables** in the runner repo; no secret push or rescore is needed.
 
 ## The paid fallback (optional)
 

@@ -6,6 +6,7 @@
 #   JOBHUNT_LLM           "cloud" (default): Ollama Cloud. "runner": Ollama on the runner (CPU).
 #   JOBHUNT_CLOUD_MODEL   Ollama Cloud model (default gpt-oss:20b)
 #   JOBHUNT_RUNNER_MODEL  model pulled on the runner; must equal llm.local.model (default qwen3.5:4b)
+#   JOBHUNT_NEAR_MISS     score range for the digest's near misses (default 55-69, or off)
 name: daily
 
 on:
@@ -46,6 +47,7 @@ env:
   # The intended local start (the first cron). If nothing has reached Telegram yet today and a
   # run starts more than 2 hours after this, its digest says so. Change it with the first cron.
   JOBHUNT_SCHEDULED_AT: "07:47"
+  JOBHUNT_NEAR_MISS: ${{ vars.JOBHUNT_NEAR_MISS || '55-69' }}
   JOBHUNT_RUNNER_REPO: ${{ github.repository }}
   GH_TOKEN: ${{ github.token }}
   OLLAMA_HOST: ${{ vars.JOBHUNT_LLM == 'runner' && 'http://localhost:11434' || 'https://ollama.com' }}

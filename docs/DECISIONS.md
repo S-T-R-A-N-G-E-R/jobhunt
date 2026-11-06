@@ -35,6 +35,10 @@ In the prompt, `under` means the role is more junior than the candidate, `match`
 - **Why:** small models are inconsistent across fields of the same answer. Deterministic rules in code are cheap and testable.
 - **Where:** `scoring.final_score`
 
+### Near misses on thin days, configured outside profile.yaml
+Two days running sent 0 matches, which feels like the pipeline is broken. When the main list has fewer than 2 jobs, up to 2 of the best unsent jobs in a near-miss range (default 55–69) are sent in their own labelled section, and marked sent like any other job. The range is the env setting `JOBHUNT_NEAR_MISS` (a repository variable in the cloud), not a `profile.yaml` key: `profile_hash` covers the whole file, so tuning a display setting there would make every score stale.
+- **Where:** `digest.near_miss_jobs`
+
 ### Stretch roles use the score before the cap
 The seniority cap hides roles that fit well apart from the level. The digest can show a few of them in a separate, clearly labelled section (`digest.stretch_max`, default 2, 0 turns it off).
 - **Stored, not recomputed:** `scores.uncapped_score` keeps the score before the cap, so the section needs no rescoring.
