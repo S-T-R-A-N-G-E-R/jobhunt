@@ -43,9 +43,9 @@ permissions:
 
 env:
   JOBHUNT_TIMEZONE: Asia/Kolkata # runners are on UTC; "already ran today" uses this date
-  # The intended local start (the first cron). A scheduled run's digest notes if it started
-  # more than 2 hours after this. Change it with the first cron.
-  JOBHUNT_SCHEDULED_AT: ${{ github.event_name == 'schedule' && '07:47' || '' }}
+  # The intended local start (the first cron). If nothing has reached Telegram yet today and a
+  # run starts more than 2 hours after this, its digest says so. Change it with the first cron.
+  JOBHUNT_SCHEDULED_AT: "07:47"
   JOBHUNT_RUNNER_REPO: ${{ github.repository }}
   GH_TOKEN: ${{ github.token }}
   OLLAMA_HOST: ${{ vars.JOBHUNT_LLM == 'runner' && 'http://localhost:11434' || 'https://ollama.com' }}

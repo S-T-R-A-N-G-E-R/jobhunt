@@ -75,13 +75,14 @@ def _notes(run: sqlite3.Row | None) -> list[str]:
 
 
 def late_note(conn: sqlite3.Connection, run: sqlite3.Row | None) -> str | None:
-    """JOBHUNT_SCHEDULED_AT ("HH:MM" local, set by the cloud workflow on scheduled runs): if
-    this is the day's first run and it started over 2 hours after that time, say so."""
+    """JOBHUNT_SCHEDULED_AT ("HH:MM" local, set by the cloud workflow): if nothing has reached
+    you yet today (no run sent a message) and this run started over 2 hours after it, say so."""
     at = env("JOBHUNT_SCHEDULED_AT")
     if not at or run is None:
         return None
     earlier = conn.execute(
-        "SELECT 1 FROM runs WHERE run_date = ? AND id < ?", (run["run_date"], run["id"])
+        "SELECT 1 FROM runs WHERE run_date = ? AND id < ? AND digest_sent = 1",
+        (run["run_date"], run["id"]),
     ).fetchone()
     started = datetime.fromisoformat(run["started_at"]).astimezone(config.local_tz())
     h, m = map(int, at.split(":"))
@@ -90,8 +91,8 @@ def late_note(conn: sqlite3.Connection, run: sqlite3.Row | None) -> str | None:
         return None
     hours, minutes = divmod(int(late.total_seconds()) // 60, 60)
     return (
-        f"⏰ Today's run started {hours}h {minutes:02d}m after {at}: "
-        "GitHub delayed or skipped the scheduled run."
+        f"⏰ Nothing reached you before this: today's run started {hours}h {minutes:02d}m "
+        f"after {at}. GitHub delayed or skipped the scheduled runs, or an earlier send failed."
     )
 
 
