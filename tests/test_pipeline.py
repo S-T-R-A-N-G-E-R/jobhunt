@@ -78,6 +78,25 @@ def test_telegram_down_is_retryable_and_resends(home):
     assert r2["status"] == "ok" and r2["sent"] == 2 and len(tg.messages) == 3
 
 
+def test_telegram_failure_fails_the_command(home, monkeypatch):
+    """A failed send must turn the Actions run red, not leave it green."""
+    from typer.testing import CliRunner
+
+    from jobhunt import cli
+
+    real = pipeline.run
+    monkeypatch.setattr(
+        pipeline, "run",
+        lambda **kw: real(
+            **kw, fetch_transport=FakeBoards().transport(), llm_transport=FakeLLM().transport(),
+            telegram_transport=FakeTelegram(down=True).transport(),
+        ),
+    )  # fmt: skip
+    result = CliRunner().invoke(cli.app, ["run", "--quiet"])
+    assert result.exit_code == 1 and "Telegram send failed" in result.output
+    assert "SECRET" not in result.output
+
+
 def test_ollama_down_skips_scoring_and_is_retryable(home):
     tg = FakeTelegram()
     r, conn = run(llm=FakeLLM(ollama_up=False), tg=tg)

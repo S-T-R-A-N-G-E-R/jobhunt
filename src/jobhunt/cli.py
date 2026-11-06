@@ -123,7 +123,12 @@ def run(
     if run_id is None:
         console.print("Already ran successfully today.")
         return
-    _print_run(db.get_run(db.connect(), run_id))
+    r = db.get_run(db.connect(), run_id)
+    _print_run(r)
+    # Fail loudly (a red run in Actions) when nothing reached Telegram; the next slot retries.
+    if "digest" in json.loads(r["errors"] or "{}"):
+        console.print("[red]Telegram send failed.[/red]")
+        raise typer.Exit(1)
 
 
 def _print_run(r) -> None:
@@ -367,9 +372,16 @@ def calibrate(n: int = typer.Option(15, help="How many jobs to compare.")):
 
 
 @schedule_app.command("install")
-def schedule_install():
-    """Install and load the launchd agent (08:00 daily + hourly catch-up)."""
-    console.print(schedule.install())
+def schedule_install(
+    cloud_backup: bool = typer.Option(
+        False,
+        "--cloud",
+        help="Instead of running locally, start the cloud workflow at 09:30 and 14:00 "
+        "(a backup for GitHub's dropped crons).",
+    ),
+):
+    """Install and load the launchd agent (08:00 daily + hourly catch-up, or --cloud)."""
+    console.print(schedule.install(cloud_backup))
 
 
 @schedule_app.command("uninstall")
